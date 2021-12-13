@@ -75,7 +75,10 @@ function processImages() {
 			const options = isPng ? optionsForPng : optionsForJpg;
 
 			return {
-				encodeOptions: options,
+				encodeOptions: {
+					...options,
+					webp: {},
+				},
 			};
 		}))
 		.pipe(dest('build/img/content'))
