@@ -1,0 +1,19 @@
+//Для разработки
+@import 'global/variables';
+
+//Базовые стили
+@import 'base/base-figure';
+@import 'base/base-list';
+@import 'base/base-link';
+@import 'base/base-title';
+@import 'base/base-par';
+@import 'base/base-button';
+
+//Глобальные стили
+@import 'global/scaffolding';
+
+//БЭМ блоки
+@import 'blocks/page-header';
+@import 'blocks/page-content';
+@import 'blocks/page-footer';
+
