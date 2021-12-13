@@ -9,6 +9,7 @@ const babel 															 = require('gulp-babel');
 const plumber 														 = require('gulp-plumber');
 const del 																 = require('del');
 const gulpSquoosh 												 = require('gulp-squoosh');
+const path = require('path')
 
 // Обновление Html в папке билд
 function copyHtml() {
@@ -59,15 +60,24 @@ function copyImg() {
 // Минификация изображения, конвертация в webp
 function processImages() {
 	return src('src/img/content/**/*')
-		.pipe(gulpSquoosh({
-					encodeOptions: {
-						webp: {},
-						...('src/img/content/**/*' === ".png"
-							? { oxipng: {} }
-							: { mozjpeg: {} }),
-					}
-				})
-		)
+		.pipe(gulpSquoosh(({ filePath }) => {
+			const imageExtension = path.extname(filePath);
+			const isPng = imageExtension === ".png";
+
+			const optionsForPng = {
+				oxipng: {}
+			};
+
+			const optionsForJpg = {
+				mozjpeg: {}
+			};
+
+			const options = isPng ? optionsForPng : optionsForJpg;
+
+			return {
+				encodeOptions: options,
+			};
+		}))
 		.pipe(dest('build/img/content'))
 		.pipe(browserSync.stream())
 }
