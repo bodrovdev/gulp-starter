@@ -1,20 +1,32 @@
 const {src, dest, watch, parallel, series} = require('gulp');
+
+const gulpSquoosh 												 = require('gulp-squoosh');
+const path 																 = require('path');
+const svgmin 															 = require('gulp-svgmin');
+const plumber 														 = require('gulp-plumber');
+
 const scss  															 = require('gulp-sass')(require('sass'));
 const prefixer 														 = require('gulp-autoprefixer');
 const clean 															 = require('gulp-clean-css');
 const concat 														   = require('gulp-concat');
-const browserSync 												 = require('browser-sync').create();
 const terser 															 = require('gulp-terser');
 const babel 															 = require('gulp-babel');
-const plumber 														 = require('gulp-plumber');
+
+const browserSync 												 = require('browser-sync').create();
 const del 																 = require('del');
-const gulpSquoosh 												 = require('gulp-squoosh');
-const path = require('path')
+
 
 // Обновление Html в папке билд
 function copyHtml() {
 	return src('src/**/*.html')
 		.pipe(dest('build/'))
+		.pipe(browserSync.stream())
+}
+
+// Обновление изображений в папке билд
+function copyImg() {
+	return src('src/img/content/*.+(png|jpg|jpeg|gif|svg|ico)')
+		.pipe(dest('build/img/content'))
 		.pipe(browserSync.stream())
 }
 
@@ -50,36 +62,39 @@ function minJs() {
 		.pipe(browserSync.stream())
 }
 
-// Обновление изображений в папке билд
-function copyImg() {
-	return src('src/img/content/*.+(png|jpg|jpeg|gif|svg|ico)')
-		.pipe(dest('build/img/content'))
-		.pipe(browserSync.stream())
-}
-
-// Минификация изображения, конвертация в webp
-function processImages() {
-	return src('src/img/content/**/*')
+// Минификация изображений, конвертация в webp
+function minImg() {
+	return src('src/img/content/*.+(png|jpg|jpeg)')
+		.pipe(plumber())
 		.pipe(gulpSquoosh(({ filePath }) => {
 			const imageExtension = path.extname(filePath);
 			const isPng = imageExtension === ".png";
-
 			const optionsForPng = {
 				oxipng: {}
 			};
-
 			const optionsForJpg = {
 				mozjpeg: {}
 			};
-
 			const options = isPng ? optionsForPng : optionsForJpg;
-
 			return {
 				encodeOptions: {
 					...options,
 					webp: {},
 				},
 			};
+		}))
+		.pipe(dest('build/img/content'))
+		.pipe(browserSync.stream())
+}
+
+// Минификация svg-изображений
+function minSvg() {
+	return src('src/img/content/*.+(svg)')
+		.pipe(svgmin({
+			plugins: [
+				'removeComments',
+				'removeEmptyContainers',
+			]
 		}))
 		.pipe(dest('build/img/content'))
 		.pipe(browserSync.stream())
@@ -106,5 +121,5 @@ function deleteBuild() {
 	return del('build')
 }
 
-exports.default = parallel(copyHtml, minStyle, minJs, copyImg, watching, syncBrowser);
-exports.build 	= series(deleteBuild, copyHtml, minStyle, minJs, processImages);
+exports.default = series(parallel(copyHtml, minStyle, minJs, copyImg, watching, syncBrowser), browserSync.reload);
+exports.build 	= series(deleteBuild, copyHtml, minStyle, minJs, minImg, minSvg);
