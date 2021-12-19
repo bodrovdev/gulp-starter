@@ -1,21 +1,17 @@
 const {src, dest, watch, parallel, series} = require('gulp');
-
 const scss  															 = require('gulp-sass')(require('sass'));
 const prefixer 														 = require('gulp-autoprefixer');
 const clean 															 = require('gulp-clean-css');
 const concat 														   = require('gulp-concat');
 const terser 															 = require('gulp-terser');
 const babel 															 = require('gulp-babel');
-
 const gulpSquoosh 												 = require('gulp-squoosh');
 const path 																 = require('path');
 const svgmin 															 = require('gulp-svgmin');
 const sprite 															 = require('gulp-svg-sprite');
 const plumber 														 = require('gulp-plumber');
-
 const browserSync 												 = require('browser-sync').create();
 const del 																 = require('del');
-
 
 // Обновление Html в папке билд
 function copyHtml() {
@@ -138,6 +134,7 @@ function syncBrowser() {
 	});
 }
 
+// Удаление предыдущей версии билда
 function deleteBuild() {
 	return del('build')
 }

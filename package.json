@@ -4,8 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+    "dev": "gulp",
+		"build" : "gulp build",
+		"cz": "npm exec git-cz"
+	},
   "keywords": [],
   "author": "",
   "license": "ISC",
