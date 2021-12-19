@@ -1,6 +1,9 @@
 //Для разработки
 @import 'global/variables';
 
+//Миксины
+@import 'mixins/fonts';
+
 //Базовые стили
 @import 'base/base-figure';
 @import 'base/base-list';
@@ -11,6 +14,7 @@
 
 //Глобальные стили
 @import 'global/scaffolding';
+@import 'global/fonts';
 
 //БЭМ блоки
 @import 'blocks/page-header';

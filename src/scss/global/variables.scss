@@ -1,9 +1,9 @@
 :root {
-	//Цвета
+	// Цвета
 	--color-white: #ffffff;
 	--color-black: #000000;
 
-	//Экраны
+	// Экраны
 	--mobileOnly: 767px;
 	--tablet: 768px; //min-width
 	--tabletS: 800px; //min-width
@@ -13,4 +13,7 @@
 	--desktopD: 1280px; //min-width
 	--desktopM: 1366px; //min-width
 	--desktopL: 1600px; //min-width
+
+	// Шрифты
+	--font-family-default: "Arial", system-ui, sans-serif;
 }
