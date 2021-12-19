@@ -1,16 +1,17 @@
 const {src, dest, watch, parallel, series} = require('gulp');
 
-const gulpSquoosh 												 = require('gulp-squoosh');
-const path 																 = require('path');
-const svgmin 															 = require('gulp-svgmin');
-const plumber 														 = require('gulp-plumber');
-
 const scss  															 = require('gulp-sass')(require('sass'));
 const prefixer 														 = require('gulp-autoprefixer');
 const clean 															 = require('gulp-clean-css');
 const concat 														   = require('gulp-concat');
 const terser 															 = require('gulp-terser');
 const babel 															 = require('gulp-babel');
+
+const gulpSquoosh 												 = require('gulp-squoosh');
+const path 																 = require('path');
+const svgmin 															 = require('gulp-svgmin');
+const sprite 															 = require('gulp-svg-sprite');
+const plumber 														 = require('gulp-plumber');
 
 const browserSync 												 = require('browser-sync').create();
 const del 																 = require('del');
@@ -100,6 +101,26 @@ function minSvg() {
 		.pipe(browserSync.stream())
 }
 
+// Создание svg-спрайта
+function svgSprite() {
+	return src('src/img/icon/**/*.svg')
+		.pipe(svgmin({
+			plugins: [
+				'removeComments',
+				'removeEmptyContainers',
+			]
+		}))
+		.pipe(sprite({
+			mode: {
+				stack: {
+					sprite: '../sprite.svg'
+				}
+			}
+		}))
+		.pipe(dest('build/img/icon'))
+		.pipe(browserSync.stream())
+}
+
 // Слежение за проектом
 function watching() {
 	watch('src/**/*.html').on('change', copyHtml);
@@ -122,4 +143,4 @@ function deleteBuild() {
 }
 
 exports.default = series(parallel(copyHtml, minStyle, minJs, copyImg, watching, syncBrowser), browserSync.reload);
-exports.build 	= series(deleteBuild, copyHtml, minStyle, minJs, minImg, minSvg);
+exports.build 	= series(deleteBuild, copyHtml, minStyle, minJs, minImg, minSvg, svgSprite);
