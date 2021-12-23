@@ -117,12 +117,20 @@ function svgSprite() {
 		.pipe(browserSync.stream())
 }
 
+// Обновление favicon в папке билд
+function copyFavicon() {
+	return src('src/img/favicon/*.+(png|svg|ico)')
+		.pipe(dest('build/img/favicon/'))
+		.pipe(browserSync.stream())
+}
+
 // Слежение за проектом
 function watching() {
 	watch('src/**/*.html').on('change', copyHtml);
 	watch('src/scss/**/*.scss', minStyle);
 	watch('src/js/**/*.js', minJs);
 	watch('src/img/content/*.+(png|jpg|jpeg|gif|svg|ico)').on('add', copyImg);
+	watch('src/img/favicon/**/*').on('add', copyFavicon)
 }
 
 // Обновление браузера
@@ -139,5 +147,5 @@ function deleteBuild() {
 	return del('build')
 }
 
-exports.default = series(parallel(copyHtml, minStyle, minJs, copyImg, watching, syncBrowser), browserSync.reload);
+exports.default = series(parallel(copyHtml, minStyle, minJs, copyImg, copyFavicon, watching, syncBrowser), browserSync.reload);
 exports.build 	= series(deleteBuild, copyHtml, minStyle, minJs, minImg, minSvg, svgSprite);
