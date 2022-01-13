@@ -1,17 +1,17 @@
 const {src, dest, watch, parallel, series} = require('gulp');
-const scss  															 = require('gulp-sass')(require('sass'));
-const prefixer 														 = require('gulp-autoprefixer');
+const babel 															 = require('gulp-babel');
+const browserSync 												 = require('browser-sync').create();
 const clean 															 = require('gulp-clean-css');
 const concat 														   = require('gulp-concat');
-const terser 															 = require('gulp-terser');
-const babel 															 = require('gulp-babel');
+const del 																 = require('del');
 const gulpSquoosh 												 = require('gulp-squoosh');
+const plumber 														 = require('gulp-plumber');
+const prefixer 														 = require('gulp-autoprefixer');
+const scss  															 = require('gulp-sass')(require('sass'));
+const sprite 															 = require('gulp-svg-sprite');
+const terser 															 = require('gulp-terser');
 const path 																 = require('path');
 const svgmin 															 = require('gulp-svgmin');
-const sprite 															 = require('gulp-svg-sprite');
-const plumber 														 = require('gulp-plumber');
-const browserSync 												 = require('browser-sync').create();
-const del 																 = require('del');
 
 // Обновление Html в папке билд
 function copyHtml() {
@@ -22,8 +22,15 @@ function copyHtml() {
 
 // Обновление изображений в папке билд
 function copyImg() {
-	return src('src/img/content/*.+(png|jpg|jpeg|gif|svg|ico)')
-		.pipe(dest('build/img/content'))
+	return src('src/img/image/**/*.+(png|jpg|jpeg|gif|svg|ico)')
+		.pipe(dest('build/img/image'))
+		.pipe(browserSync.stream())
+}
+
+// Обновление favicon в папке билд
+function copyFavicon() {
+	return src('src/img/favicon/*.+(png|svg|ico)')
+		.pipe(dest('build/img/favicon/'))
 		.pipe(browserSync.stream())
 }
 
@@ -59,9 +66,9 @@ function minJs() {
 		.pipe(browserSync.stream())
 }
 
-// Минификация изображений, конвертация в webp
+// Минификация изображений
 function minImg() {
-	return src('src/img/content/*.+(png|jpg|jpeg)')
+	return src('src/img/image/**/*.+(png|jpg|jpeg)')
 		.pipe(plumber())
 		.pipe(gulpSquoosh(({ filePath }) => {
 			const imageExtension = path.extname(filePath);
@@ -75,18 +82,30 @@ function minImg() {
 			const options = isPng ? optionsForPng : optionsForJpg;
 			return {
 				encodeOptions: {
-					...options,
-					webp: {},
+					...options
 				},
 			};
 		}))
-		.pipe(dest('build/img/content'))
+		.pipe(dest('build/img/image'))
+		.pipe(browserSync.stream())
+}
+
+// Конвертация контентных изображений в webp
+function imgToWebp() {
+	return src('src/img/image/content/**/*.+(png|jpg|jpeg)')
+		.pipe(plumber())
+		.pipe(gulpSquoosh({
+			encodeOptions: {
+				webp: {}
+			},
+		}))
+		.pipe(dest('build/img/image/content'))
 		.pipe(browserSync.stream())
 }
 
 // Минификация svg-изображений
 function minSvg() {
-	return src('src/img/content/*.+(svg)')
+	return src('src/img/image/**/*.+(svg)')
 		.pipe(svgmin({
 			plugins: [
 				'removeComments',
@@ -109,18 +128,11 @@ function svgSprite() {
 		.pipe(sprite({
 			mode: {
 				stack: {
-					sprite: '../sprite.svg'
+					sprite: '../icon.svg'
 				}
 			}
 		}))
 		.pipe(dest('build/img/icon'))
-		.pipe(browserSync.stream())
-}
-
-// Обновление favicon в папке билд
-function copyFavicon() {
-	return src('src/img/favicon/*.+(png|svg|ico)')
-		.pipe(dest('build/img/favicon/'))
 		.pipe(browserSync.stream())
 }
 
@@ -129,7 +141,7 @@ function watching() {
 	watch('src/**/*.html').on('change', copyHtml);
 	watch('src/scss/**/*.scss', minStyle);
 	watch('src/js/**/*.js', minJs);
-	watch('src/img/content/*.+(png|jpg|jpeg|gif|svg|ico)').on('add', copyImg);
+	watch(['src/img/content/**/*.+(png|jpg|jpeg|gif|svg|ico)', 'src/img/design/*']).on('add', copyImg);
 	watch('src/img/favicon/**/*').on('add', copyFavicon)
 }
 
@@ -148,4 +160,4 @@ function deleteBuild() {
 }
 
 exports.default = series(parallel(copyHtml, minStyle, minJs, copyImg, copyFavicon, watching, syncBrowser), browserSync.reload);
-exports.build 	= series(deleteBuild, copyHtml, minStyle, minJs, minImg, minSvg, svgSprite);
+exports.build 	= series(deleteBuild, copyHtml, minStyle, minJs, minImg, imgToWebp, minSvg, svgSprite);
