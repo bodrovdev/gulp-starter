@@ -34,6 +34,13 @@ function copyFavicon() {
 		.pipe(browserSync.stream())
 }
 
+// Обновление шрифтов в папке билд
+function copyFont() {
+	return src('src//fonts/**/*')
+		.pipe(dest('build/fonts/'))
+		.pipe(browserSync.stream())
+}
+
 // Минификация стилей
 function minStyle() {
 	return src('src/scss/**/*.scss')
@@ -128,7 +135,7 @@ function svgSprite() {
 		.pipe(sprite({
 			mode: {
 				stack: {
-					sprite: '../icon.svg'
+					sprite: '../sprite.svg'
 				}
 			}
 		}))
@@ -139,10 +146,11 @@ function svgSprite() {
 // Слежение за проектом
 function watching() {
 	watch('src/**/*.html').on('change', copyHtml);
+	watch(['src/img/content/**/*.+(png|jpg|jpeg|gif|svg|ico)', 'src/img/design/*']).on('add', copyImg);
+	watch('src/img/favicon/**/*').on('add', copyFavicon);
+	watch('src/fonts/**/*').on('add', copyFont);
 	watch('src/scss/**/*.scss', minStyle);
 	watch('src/js/**/*.js', minJs);
-	watch(['src/img/content/**/*.+(png|jpg|jpeg|gif|svg|ico)', 'src/img/design/*']).on('add', copyImg);
-	watch('src/img/favicon/**/*').on('add', copyFavicon)
 }
 
 // Обновление браузера
@@ -159,5 +167,5 @@ function deleteBuild() {
 	return del('build')
 }
 
-exports.default = series(parallel(copyHtml, minStyle, minJs, copyImg, copyFavicon, watching, syncBrowser), browserSync.reload);
-exports.build 	= series(deleteBuild, copyHtml, minStyle, minJs, minImg, imgToWebp, minSvg, svgSprite);
+exports.default = series(parallel(copyHtml, copyImg, copyFavicon, copyFont, minStyle, minJs, watching, syncBrowser), browserSync.reload);
+exports.build 	= series(deleteBuild, copyHtml, copyFont, minStyle, minJs, minImg, imgToWebp, minSvg, svgSprite);

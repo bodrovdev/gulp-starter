@@ -1,23 +1,22 @@
 //Для разработки
-@import 'global/variables';
+@use 'global/variables';
 
 //Миксины
-@import 'mixins/fonts';
+@use 'mixins/fonts';
 
 //Базовые стили
-@import 'base/base-figure';
-@import 'base/base-list';
-@import 'base/base-link';
-@import 'base/base-title';
-@import 'base/base-par';
-@import 'base/base-button';
+@use 'base/base-figure';
+@use 'base/base-list';
+@use 'base/base-link';
+@use 'base/base-title';
+@use 'base/base-par';
+@use 'base/base-button';
 
 //Глобальные стили
-@import 'global/scaffolding';
-@import 'global/fonts';
+@use 'global/scaffolding';
+@use 'global/fonts';
 
 //БЭМ блоки
-@import 'blocks/page-header';
-@import 'blocks/page-content';
-@import 'blocks/page-footer';
-
+@use 'blocks/page-header';
+@use 'blocks/page-content';
+@use 'blocks/page-footer';
