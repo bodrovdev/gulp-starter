@@ -1,0 +1,107 @@
+$screens: (
+	mobileOnly: (
+		min: 0,
+		max: 767px
+	),
+	tablet: (
+		min: 768px,
+	),
+	tabletS: (
+		min: 800px
+	),
+	tabletM: (
+		min: 990px
+	),
+	tabletOnly: (
+		min: 768px,
+		max: 1023px
+	),
+	desktopS: (
+		min: 1024px,
+	),
+	desktopD: (
+		min: 1280px
+	),
+	desktopM: (
+		min: 1366px,
+	),
+	desktopL: (
+		min: 1600px
+	),
+	desktopXL: (
+		min: 1920px
+	),
+	desktopXXL: (
+		min: 2048px
+	),
+	desktopXXXL: (
+		min: 3840px
+	),
+);
+
+@function getMapNested($map, $a, $b) {
+	@if (type-of($a) != "string" or type-of($b) != "string") {
+		@error "getMapNested: аргумент должен быть строкой";
+
+		@return null;
+	}
+
+	@if (map_has_key($map, $a)) {
+		@return map_get(map_get($map, $a), $b);
+	}
+
+	@else {
+		@error "Нет такого ключа";
+
+		@return null;
+	}
+}
+
+@mixin mediaQuery($bpts, $bpt) {
+	@if (map_has_key(map_get($bpts, $bpt), max)) {
+		@media only screen and (min-width: getMapNested($bpts, $bpt, min)) and (max-width: getMapNested($bpts, $bpt, max)) {
+			@content;
+		}
+	}
+
+	@else {
+		@media only screen and (min-width: getMapNested($bpts, $bpt, min)) {
+			@content;
+		}
+	}
+}
+
+/**
+ * Миксин для медиавыражений.
+ * @example respond-to(mobileOnly)
+ */
+@mixin respond-to ($bpt) {
+	@if (map_has_key($screens, $bpt)) {
+		@include mediaQuery($screens, $bpt) {
+			@content;
+		}
+	}
+
+	@else {
+		@error "Нет брейкпоинта с названием #{$bpt}";
+	}
+}
+
+/**
+ * Миксин для выключения чего-либо,
+ * когда пользователь не хочет анимаций.
+ * @example reduce-motion(reduce)
+ */
+@mixin reduce-motion ($preference) {
+	@if ($preference == "no-preference") {
+		@media (prefers-reduced-motion: no-preference) {
+			@content;
+		}
+	}
+
+	@if ($preference == "reduce") {
+		@media (prefers-reduced-motion: reduce) {
+			@content;
+		}
+	}
+}
