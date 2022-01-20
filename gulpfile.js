@@ -119,7 +119,7 @@ function minSvg() {
 				'removeEmptyContainers',
 			]
 		}))
-		.pipe(dest('build/img/content'))
+		.pipe(dest('build/img/image/'))
 		.pipe(browserSync.stream())
 }
 
