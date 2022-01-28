@@ -1,4 +1,5 @@
 const {src, dest, watch, parallel, series} = require('gulp');
+const autoprefixer 												 = require('autoprefixer');
 const babel 															 = require('gulp-babel');
 const browserSync 												 = require('browser-sync').create();
 const clean 															 = require('gulp-clean-css');
@@ -6,7 +7,9 @@ const concat 														   = require('gulp-concat');
 const del 																 = require('del');
 const gulpSquoosh 												 = require('gulp-squoosh');
 const plumber 														 = require('gulp-plumber');
-const prefixer 														 = require('gulp-autoprefixer');
+const postcss 														 = require('gulp-postcss');
+const postcssColorMod 										 = require('@alexlafroscia/postcss-color-mod-function');
+const postcssPresetEnv 										 = require('postcss-preset-env');
 const scss  															 = require('gulp-sass')(require('sass'));
 const sprite 															 = require('gulp-svg-sprite');
 const terser 															 = require('gulp-terser');
@@ -43,9 +46,17 @@ function copyFont() {
 
 // Минификация стилей
 function minStyle() {
+	const plugins = [
+		postcssPresetEnv(),
+		postcssColorMod({
+			unresolved: 'warn',
+		}),
+		autoprefixer(),
+	];
+
 	return src('src/scss/**/*.scss')
 		.pipe(scss({outputStyle: 'compressed'}))
-		.pipe(prefixer())
+		.pipe(postcss(plugins))
 		.pipe(clean({level: 2}))
 		.pipe(concat('style.min.css'))
 		.pipe(dest('build/css/'))
