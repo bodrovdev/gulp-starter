@@ -146,7 +146,7 @@ function svgSprite() {
 // Слежение за проектом
 function watching() {
 	watch('src/**/*.html').on('change', copyHtml);
-	watch(['src/img/content/**/*.+(png|jpg|jpeg|gif|svg|ico)', 'src/img/design/*']).on('add', copyImg);
+	watch(['src/img/image/**/*.+(png|jpg|jpeg|gif|svg|ico)']).on('add', copyImg);
 	watch('src/img/favicon/**/*').on('add', copyFavicon);
 	watch('src/fonts/**/*').on('add', copyFont);
 	watch('src/scss/**/*.scss', minStyle);
