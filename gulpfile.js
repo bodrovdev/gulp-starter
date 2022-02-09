@@ -10,15 +10,18 @@ const plumber 														 = require('gulp-plumber');
 const postcss 														 = require('gulp-postcss');
 const postcssColorMod 										 = require('@alexlafroscia/postcss-color-mod-function');
 const postcssPresetEnv 										 = require('postcss-preset-env');
-
-const requireDir 													 = require('require-dir');
-const tasks 															 = requireDir('./tasks');
-
 const scss  															 = require('gulp-sass')(require('sass'));
 const sprite 															 = require('gulp-svg-sprite');
 const terser 															 = require('gulp-terser');
 const path 																 = require('path');
 const svgmin 															 = require('gulp-svgmin');
+
+// TASKS
+const taskRefreshHtml1 = require('./tasks/refreshHtml')
+
+const refreshHtml = function () {
+	return taskRefreshHtml1(browserSync)
+}
 
 // Обновление изображений в папке билд
 function copyImg() {
@@ -142,8 +145,7 @@ function svgSprite() {
 
 // Слежение за проектом
 function watching() {
-	//watch('src/**/*.html').on('change', copyHtml);
-	watch('src/**/*.html', parallel('refreshHtml'));
+	watch('src/**/*.html').on('change', refreshHtml);
 	watch(['src/img/image/**/*.+(png|jpg|jpeg|gif|svg|ico)']).on('add', copyImg);
 	watch('src/img/favicon/**/*').on('add', copyFavicon);
 	watch('src/fonts/**/*').on('add', copyFont);
@@ -165,7 +167,5 @@ function deleteBuild() {
 	return del('build')
 }
 
-exports.refreshHtml = tasks.refreshHtml;
-
-exports.default = series(parallel(exports.refreshHtml, copyImg, copyFavicon, copyFont, minStyle, minJs, watching, syncBrowser), browserSync.reload);
-exports.build 	= series(deleteBuild, exports.refreshHtml, copyFont, minStyle, minJs, minImg, imgToWebp, minSvg, svgSprite);
+exports.default = series(parallel(refreshHtml, copyImg, copyFavicon, copyFont, minStyle, minJs, watching, syncBrowser), browserSync.reload);
+exports.build 	= series(deleteBuild, refreshHtml, copyFont, minStyle, minJs, minImg, imgToWebp, minSvg, svgSprite);
