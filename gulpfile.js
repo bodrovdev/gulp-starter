@@ -1,156 +1,88 @@
-const {src, dest, watch, parallel, series} = require('gulp');
-const autoprefixer 												 = require('autoprefixer');
-const babel 															 = require('gulp-babel');
-const browserSync 												 = require('browser-sync').create();
-const clean 															 = require('gulp-clean-css');
-const concat 														   = require('gulp-concat');
-const del 																 = require('del');
-const gulpSquoosh 												 = require('gulp-squoosh');
-const plumber 														 = require('gulp-plumber');
-const postcss 														 = require('gulp-postcss');
-const postcssColorMod 										 = require('@alexlafroscia/postcss-color-mod-function');
-const postcssPresetEnv 										 = require('postcss-preset-env');
-const scss  															 = require('gulp-sass')(require('sass'));
-const sprite 															 = require('gulp-svg-sprite');
-const terser 															 = require('gulp-terser');
-const path 																 = require('path');
-const svgmin 															 = require('gulp-svgmin');
+const {watch, parallel, series} = require('gulp');
+const browserSync 							= require('browser-sync').create();
+const del 											= require('del');
 
-// TASKS
-const taskRefreshHtml1 = require('./tasks/refreshHtml')
 
-const refreshHtml = function () {
-	return taskRefreshHtml1(browserSync)
-}
+// Задача для обновления HTML в папке build
+const taskRefreshHtml = require('./tasks/refreshHtml');
+const refreshHtml 		= function () {
+	return taskRefreshHtml(browserSync)
+};
 
-// Обновление изображений в папке билд
-function copyImg() {
-	return src('src/img/image/**/*.+(png|jpg|jpeg|gif|svg|ico)')
-		.pipe(dest('build/img/image'))
-		.pipe(browserSync.stream())
-}
+// Задача для обновления CSS в папке build
+const taskRefreshStyle = require('./tasks/refreshStyle');
+const refreshStyle 		 = function () {
+	return taskRefreshStyle(browserSync)
+};
 
-// Обновление favicon в папке билд
-function copyFavicon() {
-	return src('src/img/favicon/*.+(png|svg|ico)')
-		.pipe(dest('build/img/favicon/'))
-		.pipe(browserSync.stream())
-}
+// Задача для обновления изображений в папке build
+const taskRefreshImg = require('./tasks/refreshImg');
+const refreshImg 		 = function () {
+	return taskRefreshImg(browserSync)
+};
 
-// Обновление шрифтов в папке билд
-function copyFont() {
-	return src('src/fonts/**/*')
-		.pipe(dest('build/fonts/'))
-		.pipe(browserSync.stream())
-}
+// Задача для обновления Favicon в папке build
+const taskRefreshFavicon = require('./tasks/refreshFavicon');
+const refreshFavicon 		 = function () {
+	return taskRefreshFavicon(browserSync)
+};
 
-// Минификация стилей
-function minStyle() {
-	const plugins = [
-		postcssPresetEnv(),
-		postcssColorMod({
-			unresolved: 'warn',
-		}),
-		autoprefixer(),
-	];
+// Задача для обновления шрифтов в папке build
+const taskRefreshFont = require('./tasks/refreshFont');
+const refreshFont     = function () {
+	return taskRefreshFont(browserSync)
+};
 
-	return src('src/scss/**/*.scss')
-		.pipe(scss({outputStyle: 'compressed'}))
-		.pipe(postcss(plugins))
-		.pipe(clean({level: 2}))
-		.pipe(concat('style.min.css'))
-		.pipe(dest('build/css/'))
-		.pipe(browserSync.stream())
-}
+//Задача для обновления JavaScript в папке build
+const taskRefreshJavascript = require('./tasks/refreshJavascript');
+const refreshJavascript 	  = function () {
+	return taskRefreshJavascript(browserSync)
+};
 
-// Минификация JavaScript
-function minJs() {
-	return src('src/js/script.js')
-		.pipe(terser())
-		.pipe(babel({presets: ['@babel/env']}))
-		.pipe(concat('script.min.js'))
-		.pipe(dest('build/js'))
-		.pipe(browserSync.stream())
-}
+// Задача для минификации CSS
+const taskMinStyle = require('./tasks/minStyle');
+const minStyle 		 = function () {
+	return taskMinStyle(browserSync);
+};
 
-// Минификация изображений
-function minImg() {
-	return src('src/img/image/**/*.+(png|jpg|jpeg)')
-		.pipe(plumber())
-		.pipe(gulpSquoosh(({ filePath }) => {
-			const imageExtension = path.extname(filePath);
-			const isPng = imageExtension === ".png";
-			const optionsForPng = {
-				oxipng: {}
-			};
-			const optionsForJpg = {
-				mozjpeg: {}
-			};
-			const options = isPng ? optionsForPng : optionsForJpg;
-			return {
-				encodeOptions: {
-					...options
-				},
-			};
-		}))
-		.pipe(dest('build/img/image'))
-		.pipe(browserSync.stream())
-}
+// Задача для минификации JavaScript
+const taskMinJs = require('./tasks/minJs');
+const minJs 		= function () {
+	return taskMinJs(browserSync);
+};
 
-// Конвертация контентных изображений в webp
-function imgToWebp() {
-	return src('src/img/image/content/**/*.+(png|jpg|jpeg)')
-		.pipe(plumber())
-		.pipe(gulpSquoosh({
-			encodeOptions: {
-				webp: {}
-			},
-		}))
-		.pipe(dest('build/img/image/content'))
-		.pipe(browserSync.stream())
-}
+// Задача для минификации изображений
+const taskMinImg = require('./tasks/minImg');
+const minImg 		 = function () {
+	return taskMinImg(browserSync);
+};
 
-// Минификация svg-изображений
-function minSvg() {
-	return src('src/img/image/**/*.+(svg)')
-		.pipe(svgmin({
-			plugins: [
-				'removeComments',
-				'removeEmptyContainers',
-			]
-		}))
-		.pipe(dest('build/img/image/'))
-		.pipe(browserSync.stream())
-}
+// Задача для конвертации изображений в webp
+const taskImgToWebp = require('./tasks/imgToWebp');
+const imgToWebp		  = function () {
+	return taskImgToWebp(browserSync);
+};
 
-// Создание svg-спрайта
-function svgSprite() {
-	return src('src/img/icon/**/*.svg')
-		.pipe(svgmin({
-			plugins: [
-				'removeComments',
-				'removeEmptyContainers',
-			]
-		}))
-		.pipe(sprite({
-			mode: {
-				stack: {
-					sprite: '../sprite.svg'
-				}
-			}
-		}))
-		.pipe(dest('build/img/icon'))
-		.pipe(browserSync.stream())
-}
+// Задача для минификации svg-изображений
+const taskMinSvg = require('./tasks/minSvg');
+const minSvg 		 = function () {
+	return taskMinSvg(browserSync);
+};
+
+// Задача для создание svg-спрайта
+const taskSvgSprite = require('./tasks/svgSprite');
+const svgSprite 		= function () {
+	return taskSvgSprite(browserSync);
+};
 
 // Слежение за проектом
 function watching() {
 	watch('src/**/*.html').on('change', refreshHtml);
-	watch(['src/img/image/**/*.+(png|jpg|jpeg|gif|svg|ico)']).on('add', copyImg);
-	watch('src/img/favicon/**/*').on('add', copyFavicon);
-	watch('src/fonts/**/*').on('add', copyFont);
-	watch('src/scss/**/*.scss', minStyle);
-	watch('src/js/**/*.js', minJs);
+	watch('src/scss/**/*.scss').on('change', refreshStyle);
+	watch('src/js/**/*.js').on('change', refreshJavascript);
+	watch(['src/img/image/**/*.+(png|jpg|jpeg|gif|svg|ico)']).on('add', refreshImg);
+	watch('src/img/favicon/**/*').on('add', refreshFavicon);
+	watch('src/fonts/**/*').on('add', refreshFont);
 }
 
 // Обновление браузера
@@ -167,5 +99,27 @@ function deleteBuild() {
 	return del('build')
 }
 
-exports.default = series(parallel(refreshHtml, copyImg, copyFavicon, copyFont, minStyle, minJs, watching, syncBrowser), browserSync.reload);
-exports.build 	= series(deleteBuild, refreshHtml, copyFont, minStyle, minJs, minImg, imgToWebp, minSvg, svgSprite);
+exports.default = series(
+	parallel(refreshHtml,
+		refreshStyle,
+		refreshJavascript,
+		refreshImg,
+		refreshFavicon,
+		refreshFont,
+		watching,
+		syncBrowser),
+	browserSync.reload
+);
+
+exports.build = series(
+	deleteBuild,
+	refreshHtml,
+	refreshFavicon,
+	refreshFont,
+	minStyle,
+	minJs,
+	minImg,
+	imgToWebp,
+	minSvg,
+	svgSprite
+);
