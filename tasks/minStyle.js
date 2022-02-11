@@ -7,7 +7,7 @@ const postcssColorMod  = require('@alexlafroscia/postcss-color-mod-function');
 const postcssPresetEnv = require('postcss-preset-env');
 const scss  				   = require('gulp-sass')(require('sass'));
 
-// Минификация стилей
+// Минификация CSS
 module.exports = function minStyle(browserSync) {
 	const plugins = [
 		postcssPresetEnv(),
