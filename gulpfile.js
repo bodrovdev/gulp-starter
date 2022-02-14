@@ -2,17 +2,10 @@ const {watch, parallel, series} = require('gulp');
 const browserSync 							= require('browser-sync').create();
 const del 											= require('del');
 
-
 // Задача для обновления HTML в папке build
 const taskRefreshHtml = require('./tasks/refreshHtml');
 const refreshHtml 		= function () {
 	return taskRefreshHtml(browserSync)
-};
-
-// Задача для обновления CSS в папке build
-const taskRefreshStyle = require('./tasks/refreshStyle');
-const refreshStyle 		 = function () {
-	return taskRefreshStyle(browserSync)
 };
 
 // Задача для обновления изображений в папке build
@@ -78,7 +71,7 @@ const svgSprite 		= function () {
 // Слежение за проектом
 function watching() {
 	watch('src/**/*.html').on('change', refreshHtml);
-	watch('src/scss/**/*.scss').on('change', refreshStyle);
+	watch('src/scss/**/*.scss').on('change', minStyle);
 	watch('src/js/**/*.js').on('change', refreshJavascript);
 	watch(['src/img/image/**/*.+(png|jpg|jpeg|gif|svg|ico)']).on('add', refreshImg);
 	watch('src/img/favicon/**/*').on('add', refreshFavicon);
@@ -101,7 +94,7 @@ function deleteBuild() {
 
 exports.default = series(
 	parallel(refreshHtml,
-		refreshStyle,
+		minStyle,
 		refreshJavascript,
 		refreshImg,
 		refreshFavicon,
