@@ -5,8 +5,7 @@ Thumbs.db
 # Dependencies
 node_modules
 
-# Dev/Build
-build
+## Dev/Build
 
 # Unconfigured Editors
 .vscode
