@@ -1,4 +1,4 @@
-## [gulp-starter](#)
+##gulp-starter
 
 ``` bash
 # Установка зависимостей
