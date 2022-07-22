@@ -66,7 +66,7 @@ const svgSprite = function () {
 function watching() {
 	watch('src/**/*.html').on('change', refreshHtml);
 	watch('src/scss/**/*.scss').on('change', minStyle);
-	watch('src/js/**/*.js').on('change', refreshJavascript);
+	watch('src/js/**/*.js').on('change', minJs);
 	watch(['src/img/image/**/*.+(png|jpg|jpeg|gif|svg|ico)']).on('add', refreshImg);
 	watch('src/img/favicon/**/*').on('add', refreshFavicon);
 	watch('src/fonts/**/*').on('add', refreshFont);
