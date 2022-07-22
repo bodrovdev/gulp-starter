@@ -1,4 +1,4 @@
-const {src, dest} = require('gulp');
+const { src, dest } = require('gulp');
 
 // Обновление изображений в папке build
 module.exports = function refreshImg(browserSync) {

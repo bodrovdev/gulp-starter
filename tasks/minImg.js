@@ -1,7 +1,7 @@
-const {src, dest} = require('gulp');
+const { src, dest } = require('gulp');
 const gulpSquoosh = require('gulp-squoosh');
-const path 				= require('path');
-const plumber 		= require('gulp-plumber');
+const path = require('path');
+const plumber = require('gulp-plumber');
 
 // Минификация изображений
 module.exports = function minImg(browserSync) {

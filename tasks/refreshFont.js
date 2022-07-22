@@ -1,4 +1,4 @@
-const {src, dest} = require('gulp');
+const { src, dest } = require('gulp');
 
 // Обновление шрифтов в папке build
 module.exports = function copyFont(browserSync) {

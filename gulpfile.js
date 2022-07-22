@@ -1,70 +1,70 @@
-const {watch, parallel, series} = require('gulp');
-const browserSync 							= require('browser-sync').create();
-const del 											= require('del');
+const { watch, parallel, series } = require('gulp');
+const browserSync = require('browser-sync').create();
+const del = require('del');
 
 // Задача для обновления HTML в папке build
 const taskRefreshHtml = require('./tasks/refreshHtml');
-const refreshHtml 		= function () {
+const refreshHtml = function () {
 	return taskRefreshHtml(browserSync)
 };
 
 // Задача для обновления изображений в папке build
 const taskRefreshImg = require('./tasks/refreshImg');
-const refreshImg 		 = function () {
+const refreshImg = function () {
 	return taskRefreshImg(browserSync)
 };
 
 // Задача для обновления Favicon в папке build
 const taskRefreshFavicon = require('./tasks/refreshFavicon');
-const refreshFavicon 		 = function () {
+const refreshFavicon = function () {
 	return taskRefreshFavicon(browserSync)
 };
 
 // Задача для обновления шрифтов в папке build
 const taskRefreshFont = require('./tasks/refreshFont');
-const refreshFont     = function () {
+const refreshFont = function () {
 	return taskRefreshFont(browserSync)
 };
 
 //Задача для обновления JavaScript в папке build
 const taskRefreshJavascript = require('./tasks/refreshJavascript');
-const refreshJavascript 	  = function () {
+const refreshJavascript = function () {
 	return taskRefreshJavascript(browserSync)
 };
 
 // Задача для минификации CSS
 const taskMinStyle = require('./tasks/minStyle');
-const minStyle 		 = function () {
+const minStyle = function () {
 	return taskMinStyle(browserSync);
 };
 
 // Задача для минификации JavaScript
 const taskMinJs = require('./tasks/minJs');
-const minJs 		= function () {
+const minJs = function () {
 	return taskMinJs(browserSync);
 };
 
 // Задача для минификации изображений
 const taskMinImg = require('./tasks/minImg');
-const minImg 		 = function () {
+const minImg = function () {
 	return taskMinImg(browserSync);
 };
 
 // Задача для конвертации изображений в webp
 const taskImgToWebp = require('./tasks/imgToWebp');
-const imgToWebp		  = function () {
+const imgToWebp = function () {
 	return taskImgToWebp(browserSync);
 };
 
 // Задача для минификации svg-изображений
 const taskMinSvg = require('./tasks/minSvg');
-const minSvg 		 = function () {
+const minSvg = function () {
 	return taskMinSvg(browserSync);
 };
 
 // Задача для создание svg-спрайта
 const taskSvgSprite = require('./tasks/svgSprite');
-const svgSprite 		= function () {
+const svgSprite = function () {
 	return taskSvgSprite(browserSync);
 };
 

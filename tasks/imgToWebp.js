@@ -1,6 +1,6 @@
-const {src, dest} = require('gulp');
+const { src, dest } = require('gulp');
 const gulpSquoosh = require('gulp-squoosh');
-const plumber 		= require('gulp-plumber');
+const plumber = require('gulp-plumber');
 
 // Конвертация контентных изображений в webp
 module.exports = function imgToWebp(browserSync) {

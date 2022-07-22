@@ -1,5 +1,5 @@
-const {src, dest} = require('gulp');
-const svgmin 		  = require('gulp-svgmin');
+const { src, dest } = require('gulp');
+const svgmin = require('gulp-svgmin');
 
 // Минификация svg-изображений
 module.exports = function minSvg(browserSync) {

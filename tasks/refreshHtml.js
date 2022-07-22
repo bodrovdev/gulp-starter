@@ -1,5 +1,5 @@
-const {src, dest} = require('gulp');
-const include 	  = require('gulp-file-include');
+const { src, dest } = require('gulp');
+const include = require('gulp-file-include');
 
 // Обновление HTML в папке build
 module.exports = function refreshHtml(browserSync) {

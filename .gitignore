@@ -6,7 +6,6 @@ Thumbs.db
 node_modules
 
 # Dev/Build
-makeblock.sh
 build
 
 # Unconfigured Editors
