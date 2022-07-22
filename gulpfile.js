@@ -26,12 +26,6 @@ const refreshFont = function () {
 	return taskRefreshFont(browserSync)
 };
 
-//Задача для обновления JavaScript в папке build
-const taskRefreshJavascript = require('./tasks/refreshJavascript');
-const refreshJavascript = function () {
-	return taskRefreshJavascript(browserSync)
-};
-
 // Задача для минификации CSS
 const taskMinStyle = require('./tasks/minStyle');
 const minStyle = function () {
@@ -95,7 +89,7 @@ function deleteBuild() {
 exports.default = series(
 	parallel(refreshHtml,
 		minStyle,
-		refreshJavascript,
+		minJs,
 		refreshImg,
 		refreshFavicon,
 		refreshFont,
