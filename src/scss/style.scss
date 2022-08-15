@@ -6,6 +6,7 @@
 @use 'mixins/screens';
 
 //Базовые стили
+@use 'base/base-container';
 @use 'base/base-figure';
 @use 'base/base-list';
 @use 'base/base-link';
