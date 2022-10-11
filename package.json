@@ -19,6 +19,7 @@
     "babel-loader": "^8.2.5",
     "browser-sync": "^2.27.7",
     "del": "^6.0.0",
+    "gh-pages": "^4.0.0",
     "git-cz": "^4.8.0",
     "gulp": "^4.0.2",
     "gulp-babel": "^8.0.0",
